@@ -40,11 +40,18 @@ ifndef OBS
 	ssh app@$(TIZEN_IP) "pkgcmd -i -t wgt -p /home/app/JLRPOCX007.News.wgt -q"
 endif
 
-install: deploy
 ifndef OBS
+install: deploy
 	ssh app@$(TIZEN_IP) "export DBUS_SESSION_BUS_ADDRESS='unix:path=/run/user/5000/dbus/user_bus_socket' && xwalkctl | egrep -e 'News' | awk '{print $1}' | xargs --no-run-if-empty xwalkctl -u"
-	ssh app@$(TIZEN_IP) "export DBUS_SESSION_BUS_ADDRESS='unix:path=/run/user/5000/dbus/user_bus_socket' && xwalkctl -i /home/app/DNA_News.wgt"
+	ssh app@$(TIZEN_IP) "export DBUS_SESSION_BUS_ADDRESS='unix:path=/run/user/5000/dbus/user_bus_socket' && xwalkctl -i /home/app/JLRPOCX007.News.wgt"
+else
+install: 
+	cp -r JLRPOCX031.Phone.wgt ${DESTDIR}/opt/usr/apps/.preinstallWidgets/
 endif
+
+install_obs: 
+	mkdir -p ${DESTDIR}/opt/usr/apps/.preinstallWidgets
+	cp -r JLRPOCX007.News.wgt ${DESTDIR}/opt/usr/apps/.preinstallWidgets/
 
 $(PROJECT).wgt : wgt
 
@@ -71,22 +78,21 @@ clean:
 	rm -rf css/car
 	rm -rf css/user
 	rm -f $(PROJECT).wgt
-	git clean -f
 
-common: /opt/usr/apps/common
-	cp -r /opt/usr/apps/common/js/* js/
-	cp -r /opt/usr/apps/common/css/* css/
+common: /opt/usr/apps/common-apps
+	cp -r /opt/usr/apps/common-apps DNA_common
 
-/opt/usr/apps/common:
+/opt/usr/apps/common-apps:
 	@echo "Please install Common Assets"
 	exit 1
 
 dev-common: ../common-app
 	cp -rf ../common-app ./DNA_common
 
-../DNA_common:
-	@echo "Please checkout Common Assets"
-	exit 1
+../common-app:
+	#@echo "Please checkout Common Assets"
+	#exit 1
+	git clone  git@github.com:PDXostc/common-app.git ../common-app
 
 $(INSTALL_DIR) :
 	mkdir -p $(INSTALL_DIR)/
