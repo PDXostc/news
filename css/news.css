@@ -1,246 +1,164 @@
-body {
-	overflow: hidden;
-	width: 1080px;
-	height: 1920px;
-	margin: 0;
-	padding: 0;
-}
-
-.wrapper {
-	height: 1673px;
-	width: 100%;
-}
-
 a {
-	text-decoration: none;
+  text-decoration: none;
 }
 
-.news-categories {
-	background-color: rgba(68, 68, 68, .6);
-	z-index: 0;
-	position: relative;
-	display: inline-block;
-	margin-top: 5px;
-	height: 100px;
-	width: 100%;
-	text-align: center;
-	padding-top: 18px;
-	font-size: 5.4rem;
+.feed-channels {
+  font-size: 5.4rem;
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 100px;
+  margin-top: 5px;
+  padding-top: 18px;
+  text-align: center;
+  background-color: rgba(68, 68, 68, .6);
 }
 
 .newsTopics li {
-	display: inline;
-	list-style-type: none;
-	padding-right: 53px;
-	font-size: 4.8rem;
+  font-size: 4.8rem;
+  display: inline;
+  padding-right: 53px;
+  list-style-type: none;
 }
 
-#topArticleList {
-	z-index: 0;
-	visibility: visible;
-	overflow-y: scroll;
-	overflow-x: hidden;
-	height: 88%;
+.article-list ul {
+  margin: 0 10px 0 20px;
+  padding: 0;
+  list-style-type: none;
 }
 
-#topArticleList ul {
-	list-style-type: none;
-	padding: 0;
-	margin: 0;
-}
-
-#topArticleList li {
-	overflow: hidden;
-	position: relative;
-	margin: 0;
-	padding: 0;
-}
-
-#entertainArticleList {
-	z-index: 0;
-	display: none;
-	overflow-y: scroll;
-	overflow-x: hidden;
-	height: 88%;
-}
-
-#entertainArticleList li {
-	overflow: hidden;
-	position: relative;
-	margin: 0;
-	padding: 0;
-}
-
-#entertainArticleList ul {
-	list-style-type: none;
-	padding: 0;
-	margin: 0;
-}
-
-#sportsArticleList {
-	z-index: 0;
-	display: none;
-	overflow-y: scroll;
-	overflow-x: hidden;
-	height: 88%;
-}
-
-#sportsArticleList li {
-	overflow: hidden;
-	position: relative;
-	margin: 0;
-	padding: 0;
-}
-
-#sportsArticleList ul {
-	list-style-type: none;
-	padding: 0;
-	margin: 0;
+.article-list li {
+  font-weight: 300;
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 20px;
+  border-bottom: 1 px solid rgba(255, 255, 255, .25);
 }
 
 /*articleScroller class is created dynamically by main.js*/
+
 #articleScroller li {
-	overflow: hidden;
-	position: relative;
-	margin: 0;
-	padding: 0;
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 ul#articleScroller {
-	list-style-type: none;
-	padding: 0;
-	margin: 0;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
 }
 
-.articleList {
-	border: 2px solid #B2F0FF;
-	position: relative;
-	display: inline-block;
-	top: 5px;
-	left: 0px;
-	width: 100%;
-	overflow-y: scroll;
-	overflow-x: hidden;
-	-webkit-overflow-scrolling: touch;
+#feed-lists {
+  flex: 1;
 }
 
 .articleListItem {
-	background-color: rgba(68, 68, 68, .6);
-	display: block;
-	width: 1056px;
-	height: 187px;
-	margin: 10px 10px 0 10px;
-	line-height: 1.4;
+  line-height: 1.4;
+  display: block;
+  width: 1056px;
+  height: 187px;
+  margin: 10px 10px 0 10px;
+  background-color: rgba(68, 68, 68, .6);
 }
 
 .itemDate {
-	text-transform: uppercase;
-	font-size: 2.6rem;
+  font-size: 2.6rem;
+  text-transform: uppercase;
 }
 
 .itemSubHead {
-	font-size: 2.6rem;
+  font-size: 2.6rem;
 }
 
 .itemDesc {
-	font-size: 2rem;
-	color: #FFF;
+  font-size: 2rem;
+  color: #fff;
 }
 
 .article {
-	z-index: -4;
-	position: absolute;
-	top: 192px;
-	left: 0px;
-	width: 1080px;
-	background: #000000;
-	overflow: hidden;
-	bottom: -1px;
+  background: #000;
 }
 
 .articlePhoto {
-	margin: 20px 38px 20px 0px;
-	float: left;
+  float: left;
+  margin: 20px 38px 20px 0;
 }
 
 .articleHead {
-	display: block;
-	padding: -8px;
-	vertical-align: middle;
-	text-transform: uppercase;
-	margin-top: 2%;
-	margin-bottom: 1%;
+  display: block;
+  margin-top: 2%;
+  margin-bottom: 1%;
+  padding: -8px;
+  vertical-align: middle;
+  text-transform: uppercase;
 }
 
 .articleBody {
-	display: block;
-	padding: 22px 31px 31px 31px;
-	line-height: 1.4;
+  line-height: 1.4;
+  display: block;
+  padding: 22px 31px 31px 31px;
 }
 
 .thumbnail {
-	display: inline-block;
-	width: 260px;
-	height: 173px;
-	padding: 6px;
-	vertical-align: middle;
+  display: inline-block;
+  width: 260px;
+  height: 173px;
+  padding: 6px;
+  vertical-align: middle;
 }
 
 .itemText {
-	display: inline-block;
-	width: 750px;
-	height: 168px;
-	padding: 3px 3px 3px 12px;
-	vertical-align: middle;
-	overflow: hidden;
-	font-size: 1.5rem;
+  font-size: 1.5rem;
+  display: inline-block;
+  overflow: hidden;
+  width: 750px;
+  height: 168px;
+  padding: 3px 3px 3px 12px;
+  vertical-align: middle;
 }
 
 .itemTitle {
-	color: #B2F0FF;
-	font-size: 2.6rem;
+  font-size: 2.6rem;
+  color: #b2f0ff;
 }
 
 .itemTextGradFade {
-	z-index: -6;
-	display: block;
-	width: 490px;
-	height: 35px;
-	left: 195px;
-	bottom: 36px;
+  z-index: -6;
+  bottom: 36px;
+  left: 195px;
+  display: block;
+  width: 490px;
+  height: 35px;
 }
 
 .articleListGradFade {
-	z-index: 0;
-	width: 1080px;
-	height: 80px;
-	left: 2px;
-	bottom: 0;
-	background: -webkit-linear-gradient(top, rgba(0,0,0,0) 3%,rgba(0,0,0,1) 100%);
-	position: absolute;
+  position: absolute;
+  z-index: 0;
+  bottom: 0;
+  left: 2px;
+  width: 1080px;
+  height: 80px;
+  background: -webkit-linear-gradient(top, rgba(0,0,0,0) 3%,rgba(0,0,0,1) 100%);
 }
 
 .scrollIndicator {
-	display: block;
-	width:52px;
-	height: 32px;
-	margin-left: 50%;
-	margin-right: 50%;
-	margin-top: 20px;
+  display: block;
+  width: 52px;
+  height: 32px;
+  margin-top: 20px;
+  margin-right: 50%;
+  margin-left: 50%;
 }
 
-#bottomBarLogoImg {
-	content:url('/images/logo_icon.png');
-}
-
-.padRight {
-	padding: 0px 16px 0px 0px;
-}
-
-.deselected {
-	font-weight: normal;
+#bbar-logo {
+  background-image: url('/images/logo_icon.png');
 }
 
 .selected {
-	font-weight: 700;
+  font-weight: 700;
+  color: #fe9c00;
 }
