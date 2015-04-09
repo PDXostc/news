@@ -30,7 +30,7 @@ var te;
  * @property carIndicatorSignals {string[]}
  */
 var carIndicatorSignals = [
-    "IviPoC_NightMode"
+  "IviPoC_NightMode"
 ];
 
 /**
@@ -39,126 +39,128 @@ var carIndicatorSignals = [
  * @static
  **/
 function setThemeImageColor() {
-    var imageSource;
+  var imageSource;
 
-    $('body').find('img').each(function() {
-        var self = this;
+  $('body').find('img').each(function() {
+    var self = this;
 
-        imageSource = $(this).attr('src');
+    imageSource = $(this).attr('src');
 
-        if (typeof(imageSource) !== 'undefined' && $(this.parentElement).hasClass('themeImage') == false) {
-            console.log(imageSource);
+    if (typeof(imageSource) !== 'undefined' && $(this.parentElement).hasClass('themeImage') == false) {
+      console.log(imageSource);
 
-            var img = new Image();
-            var ctx = document.createElement('canvas').getContext('2d');
+      var img = new Image();
+      var ctx = document.createElement('canvas').getContext('2d');
 
-            img.onload = function () {
-                var w = ctx.canvas.width = img.width;
-                var h = ctx.canvas.height = img.height;
-                ctx.fillStyle = ThemeKeyColor;
-                ctx.fillRect(0, 0, w, h);
-                ctx.globalCompositeOperation = 'destination-in';
-                ctx.drawImage(img, 0, 0);
+      img.onload = function() {
+        var w = ctx.canvas.width = img.width;
+        var h = ctx.canvas.height = img.height;
+        ctx.fillStyle = ThemeKeyColor;
+        ctx.fillRect(0, 0, w, h);
+        ctx.globalCompositeOperation = 'destination-in';
+        ctx.drawImage(img, 0, 0);
 
-                $(self).attr('src', ctx.canvas.toDataURL());
-                $(self).hide(0, function() { $(self).show();});
-            };
+        $(self).attr('src', ctx.canvas.toDataURL());
+        $(self).hide(0, function() {
+          $(self).show();
+        });
+      };
 
-            img.src = imageSource;
-        }
-    });
+      img.src = imageSource;
+    }
+  });
 }
 
 function setupSpeechRecognition() {
-    console.log("Store setupSpeechRecognition");
-    Speech.addVoiceRecognitionListener({
-        onapplicationinstall: function() {
-            console.log("Speech application install invoked");
-            if (_applicationDetail.id !== undefined) {
-                StoreLibrary.installApp(_applicationDetail.id);
-            }
-        },
-        onapplicationuninstall: function() {
-            console.log("Speech application uninstall invoked");
-            if (_applicationDetail.id !== undefined) {
-                StoreLibrary.uninstallApp(_applicationDetail.id);
-            }
-        }
-    });
+  console.log("Store setupSpeechRecognition");
+  Speech.addVoiceRecognitionListener({
+    onapplicationinstall: function() {
+      console.log("Speech application install invoked");
+      if (_applicationDetail.id !== undefined) {
+        StoreLibrary.installApp(_applicationDetail.id);
+      }
+    },
+    onapplicationuninstall: function() {
+      console.log("Speech application uninstall invoked");
+      if (_applicationDetail.id !== undefined) {
+        StoreLibrary.uninstallApp(_applicationDetail.id);
+      }
+    }
+  });
 }
 
 document.onreadystatechange = function() {
-    if (document.readyState == "complete") {
-        init();
-    }
+  if (document.readyState == "complete") {
+    init();
+  }
 };
 
 function init() {
-    ['top', 'entertainment', 'sports'].forEach(generate);
+  ['top', 'entertainment', 'sports'].forEach(generate);
 }
 
 function generate(section) {
-    var request = new XMLHttpRequest();
+  var request = new XMLHttpRequest();
 
-    var mapping = {
-        top: {
-            url: 'http://mycricket.clearmode.com/FeedServiceBP/docs/fid=3e8',
-            elem: '#topArticleListInner'
-        },
-        entertainment: {
-            url: 'http://mycricket.clearmode.com/FeedServiceSP/docs/fid=3eb',
-            elem: '#entertainArticleListInner'
-        },
-        sports: {
-            url: 'http://mycricket.clearmode.com/FeedServiceSP/docs/fid=3e9',
-            elem: '#sportsArticleListInner'
-        }
+  var mapping = {
+    top: {
+      url: 'http://mycricket.clearmode.com/FeedServiceBP/docs/fid=3e8',
+      elem: 'ul'
+    },
+    entertainment: {
+      url: 'http://mycricket.clearmode.com/FeedServiceSP/docs/fid=3eb',
+      elem: 'ul'
+    },
+    sports: {
+      url: 'http://mycricket.clearmode.com/FeedServiceSP/docs/fid=3e9',
+      elem: 'ul'
+    }
+  };
+
+  var readyStateChanged = function(map) {
+    return function() {
+      if (request.readyState === 4 && request.status === 200) {
+        var xml = request.responseXML.documentElement;
+        var nodes = xml.querySelectorAll('item');
+        var items = Array.prototype.slice.call(nodes);
+        items.map(xml2html(mapping[map].url)).forEach(function(elem) {
+          var list = document.querySelector(mapping[map].elem);
+          list.appendChild(elem);
+        });
+      }
     };
+  };
 
-    var readyStateChanged = function(map) {
-        return function() {
-            if (request.readyState === 4 && request.status === 200) {
-                var xml = request.responseXML.documentElement;
-                var nodes = xml.querySelectorAll('item');
-                var items = Array.prototype.slice.call(nodes);
-                items.map(xml2html(mapping[map].url)).forEach(function(elem) {
-                    var list = document.querySelector(mapping[map].elem);
-                    list.appendChild(elem);
-                });
-            }
-        };
-    };
-
-    request.onreadystatechange = readyStateChanged(section);
-    request.open('GET', mapping[section].url, true);
-    request.send(null);
+  request.onreadystatechange = readyStateChanged(section);
+  request.open('GET', mapping[section].url, true);
+  request.send(null);
 }
 
 function xml2html(url) {
-    return function(xml) {
-        var content = document.querySelector('#newsItem').content;
+  return function(xml) {
+    var content = document.querySelector('#newsItem').content;
 
-        var guid = xml.querySelector('guid').innerHTML;
-        var enclosure = xml.querySelector('enclosure');
-        var image = enclosure ? enclosure.attributes['url'].value : '//:0';
-        var date = xml.querySelector('pubDate').innerHTML;
-        var title = xml.querySelector('title').innerHTML;
-        var desc = xml.querySelector('description').innerHTML;
+    var guid = xml.querySelector('guid').innerHTML;
+    var enclosure = xml.querySelector('enclosure');
+    var image = enclosure ? enclosure.attributes['url'].value : '//:0';
+    var date = xml.querySelector('pubDate').innerHTML;
+    var title = xml.querySelector('title').innerHTML;
+    var desc = xml.querySelector('description').innerHTML;
 
-        var href = "javascript:showArticle('";
-        href += url;
-        href += '/did=';
-        href += guid;
-        href += "');";
+    var href = "javascript:showArticle('";
+    href += url;
+    href += '/did=';
+    href += guid;
+    href += "');";
 
-        content.querySelector('a').href = href;
-        content.querySelector('img').src = image;
-        content.querySelector('.itemDate').textContent = date;
-        content.querySelector('.itemTitle').textContent = title;
-        content.querySelector('.itemDesc').textContent = desc;
+    content.querySelector('a').href = href;
+    content.querySelector('img').src = image;
+    content.querySelector('.itemDate').textContent = date;
+    content.querySelector('.itemTitle').textContent = title;
+    content.querySelector('.itemDesc').textContent = desc;
 
-        return content.cloneNode(true);
-    };
+    return content.cloneNode(true);
+  };
 }
 
 /* Close all function to hide (as opposed to display:none) all
@@ -169,66 +171,72 @@ function xml2html(url) {
 
 function closeAll(className) {
 
-	$("."+className).hide();
+  $("." + className).hide();
 
-    //$('#articleClose').hide();
+  //$('#articleClose').hide();
 
-    /* Terminate jQuery-created DOM elements and iScroll instance
-       with maximum predjudice upon closeAll.
-    */
+  /* Terminate jQuery-created DOM elements and iScroll instance
+     with maximum predjudice upon closeAll.
+  */
 
-    if (typeof articleScroll !== typeof undefined) {
-        articleScroll.destroy();
-		$(".articleBody").empty();
-		$(".articleBody").remove()
-		$(".articleItem").remove();
-		$("#articleScroller").remove();
-	}
+  if (typeof articleScroll !== typeof undefined) {
+    articleScroll.destroy();
+    $(".articleBody").empty();
+    $(".articleBody").remove()
+    $(".articleItem").remove();
+    $("#articleScroller").remove();
+  }
 }
 
 /* functions to show scrolling lists of thumbnail images, article
    headlines + summaries for each category
 */
 
+var topNewsList = document.getElementById('top-news');
+var peopleList = document.getElementById('people');
+var sportsList = document.getElementById('sports');
+var topNewsButton = document.getElementById('top-news-button');
+var peopleButton = document.getElementById('people-button');
+var sportsButton = document.getElementById('sports-button');
+
 function showTop() {
-    closeAll('article');
-    //setTimeout(function () {topScroll.refresh();}, 1000);
+  closeAll('article');
+  //setTimeout(function () {topScroll.refresh();}, 1000);
 
-    document.getElementById('topArticleList').style.display = 'block';
-    document.getElementById('entertainArticleList').style.display = 'none';
-    document.getElementById('sportsArticleList').style.display = 'none';
+  topNewsList.classList.remove('hidden');
+  peopleList.classList.add('hidden')
+  sportsList.classList.add('hidden');
 
-    document.getElementById('top').className = 'orange-viv selected padRight';
-    document.getElementById('entertain').className = 'orange-lt deselected padRight';
-    document.getElementById('sports').className = 'orange-lt deselected';
+  topNewsButton.classList.add('selected');
+  peopleButton.classList.remove('selected');
+  sportsButton.classList.remove('selected');
 }
 
 function showEntertain() {
-    closeAll('article');
-    //setTimeout(function () {entScroll.refresh();}, 1000);
+  closeAll('article');
+  //setTimeout(function () {entScroll.refresh();}, 1000);
 
-    document.getElementById('topArticleList').style.display = 'none';
-    document.getElementById('entertainArticleList').style.display = 'block';
-    document.getElementById('sportsArticleList').style.display = 'none';
+  peopleList.classList.remove('hidden');
+  topNewsList.classList.add('hidden');
+  sportsList.classList.add('hidden');
 
-    document.getElementById('top').className = 'orange-lt deselected padRight';
-    document.getElementById('entertain').className = 'orange-viv selected padRight';
-    document.getElementById('sports').className = 'orange-lt deselected';
+  peopleButton.classList.add('selected');
+  topNewsButton.classList.remove('selected');
+  sportsButton.classList.remove('selected');
 }
 
 function showSports() {
-    closeAll('article');
-    //setTimeout(function () {sportsScroll.refresh();}, 1000);
+  closeAll('article');
+  //setTimeout(function () {sportsScroll.refresh();}, 1000);
 
-    document.getElementById('topArticleList').style.display = 'none';
-    document.getElementById('entertainArticleList').style.display = 'none';
-    document.getElementById('sportsArticleList').style.display = 'block';
+  sportsList.classList.remove('hidden');
+  topNewsList.classList.add('hidden');    230
+  peopleList.classList.add('hidden'); 231
 
-    document.getElementById('top').className = 'orange-lt deselected padRight';
-    document.getElementById('entertain').className = 'orange-lt deselected padRight';
-    document.getElementById('sports').className = 'orange-viv selected';
+  sportsButton.classList.add('selected'); 233
+  topNewsButton.classList.remove('selected'); 234
+  peopleButton.classList.remove('selected');
 }
-
 
 /* for a given full text article's url, get it via ajax,
    then parse and display it
@@ -236,53 +244,55 @@ function showSports() {
 
 function showArticle(url) {
 
-    /* re-create articleSroller <ul> element to force
-       iScroll instance to re-get the correct height
-    */
+  /* re-create articleSroller <ul> element to force
+     iScroll instance to re-get the correct height
+  */
 
-    if ($('#articleScroller').length == 0) {
-        addScr = '<ul id=\"articleScroller\">';
-        $("#articleContainer").append(addScr);
-    } else {
-    }
+  if ($('#articleScroller').length == 0) {
+    addScr = '<ul id=\"articleScroller\">';
+    $("#articleContainer").append(addScr);
+  } else {}
 
-    /* ajax article call, receives 'url' constructed in
-       BuildItemHTML function
-    */
+  /* ajax article call, receives 'url' constructed in
+     BuildItemHTML function
+  */
 
-    $.get(url, function(xml) {
-        console.log("fire function to get article");
+  $.get(url, function(xml) {
+    console.log("fire function to get article");
 
-        myHTMLOutput = '';
-        $('item',xml).each(function(i) {
-            articleHead = $(this).find("title").text();
-            articleBody = $(this).find("body").text();
-            articleBody = articleBody.replace(/(?:^|[^"'])((ftp|http|https|file):\/\/[\S]+(\b|$))/gi, "<p><img width=\"550px\" class=\"articlePhoto\" src=\"$1\" />");
-            itemId = $(this).find("id").text();
-            console.log("each loop for article items");
-        });
-
-        myHTMLOutput = '<li class=\"articleItem\"><div class=\"articleBody orange-viv\">';
-        myHTMLOutput += '<h4 class=\"articleHead orange-viv\">'+ articleHead +'</h4>'+ articleBody +'</div></li>';
-
-        $("#articleScroller").append(myHTMLOutput);
-        console.log("article html sent");
-
-		
-        //articleScroll = null;
-        articleScroll = new iScroll('articleContainer', { hScrollbar: false, vScrollbar: false });
-
-        setTimeout(function() {
-            var element = document.getElementById("articleScroller");
-            articleScroll.refresh();
-        }, 1000);
-        
+    myHTMLOutput = '';
+    $('item', xml).each(function(i) {
+      articleHead = $(this).find("title").text();
+      articleBody = $(this).find("body").text();
+      articleBody = articleBody.replace(/(?:^|[^"'])((ftp|http|https|file):\/\/[\S]+(\b|$))/gi, "<p><img width=\"550px\" class=\"articlePhoto\" src=\"$1\" />");
+      itemId = $(this).find("id").text();
+      console.log("each loop for article items");
     });
 
-    // make article parent div and UI elements visible
+    myHTMLOutput = '<li class=\"articleItem\"><div class=\"articleBody orange-viv\">';
+    myHTMLOutput += '<h4 class=\"articleHead orange-viv\">' + articleHead + '</h4>' + articleBody + '</div></li>';
 
-    var container = document.getElementById('articleContainer');
-    $("#articleContainer").show();
-    $("#articleContainer").css('z-index', 0);
-    //$("#articleClose").show();
+    $("#articleScroller").append(myHTMLOutput);
+    console.log("article html sent");
+
+
+    //articleScroll = null;
+    articleScroll = new iScroll('articleContainer', {
+      hScrollbar: false,
+      vScrollbar: false
+    });
+
+    setTimeout(function() {
+      var element = document.getElementById("articleScroller");
+      articleScroll.refresh();
+    }, 1000);
+
+  });
+
+  // make article parent div and UI elements visible
+
+  var container = document.getElementById('articleContainer');
+  $("#articleContainer").show();
+  $("#articleContainer").css('z-index', 0);
+  //$("#articleClose").show();
 }
